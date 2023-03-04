@@ -1,0 +1,62 @@
+{
+  "name": "Comfortable Inventory",
+  "author": "Kohanis",
+  "description": "Some tweaks for more comfortable interaction with inventory",
+  "version": "1.2.1",
+  "license": "EUPL-1.2-or-later",
+  "icon": "icon.png",
+  "gameVersion": "1.0",
+  "requiredByAllPlayers": false,
+  "updateUrl": "https://raftmodding.com/api/v1/mods/comfortable-inventory/version.txt",
+  "isModPermanent": false,
+  "excludedFiles": [],
+  "modSettings": [
+    {
+      "type": "text",
+      "name": "preferInventoryText",
+      "text": "Place items inside inventory first"
+    },
+    {
+      "type": "checkbox",
+      "name": "preferInventory",
+      "text": "Enable",
+      "access": "both",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "name": "preferHotbarEquipment",
+      "text": "Except equipment",
+      "access": "both",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "name": "preferHotbarTools",
+      "text": "Except tools",
+      "access": "both",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "name": "preferHotbarCookedFood",
+      "text": "Except cooked food",
+      "access": "both",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "name": "preferHotbarHealing",
+      "text": "Except healing items",
+      "access": "both",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "name": "preferHotbarBuildable",
+      "text": "Except buildable",
+      "access": "both",
+      "default": true
+    }
+  ]
+}
