@@ -2,7 +2,7 @@
   "name": "Comfortable Inventory",
   "author": "Kohanis",
   "description": "Some tweaks for more comfortable interaction with inventory",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "license": "EUPL-1.2-or-later",
   "icon": "icon.png",
   "gameVersion": "1.0",
@@ -41,6 +41,20 @@
       "type": "checkbox",
       "name": "preferHotbarCookedFood",
       "text": "Except cooked food",
+      "access": "both",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "name": "PreferHotbarFreshWater",
+      "text": "Except fresh water",
+      "access": "both",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "name": "preferHotbarFoodContainers",
+      "text": "Except food containers",
       "access": "both",
       "default": true
     },

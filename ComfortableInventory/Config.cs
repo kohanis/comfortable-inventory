@@ -6,8 +6,11 @@
         internal static bool PreferHotbarEquipment = true;
         internal static bool PreferHotbarTools = true;
         internal static bool PreferHotbarCookedFood = true;
+        internal static bool PreferHotbarFreshWater = true;
+        internal static bool PreferHotbarFoodContainers = true;
         internal static bool PreferHotbarHealing = true;
         internal static bool PreferHotbarBuildable = true;
+
 
         public static void ExtraSettingsAPI_Load()
         {
@@ -25,13 +28,13 @@
             PreferHotbarEquipment = ExtraSettingsAPI_GetCheckboxState("preferHotbarEquipment");
             PreferHotbarTools = ExtraSettingsAPI_GetCheckboxState("preferHotbarTools");
             PreferHotbarCookedFood = ExtraSettingsAPI_GetCheckboxState("preferHotbarCookedFood");
+            PreferHotbarFreshWater = ExtraSettingsAPI_GetCheckboxState("PreferHotbarFreshWater");
+            PreferHotbarFoodContainers = ExtraSettingsAPI_GetCheckboxState("preferHotbarFoodContainers");
             PreferHotbarHealing = ExtraSettingsAPI_GetCheckboxState("preferHotbarHealing");
             PreferHotbarBuildable = ExtraSettingsAPI_GetCheckboxState("preferHotbarBuildable");
         }
 
-        public static bool ExtraSettingsAPI_GetCheckboxState(string settingName)
-        {
-            return true;
-        }
+        public static bool ExtraSettingsAPI_GetCheckboxState(string settingName) =>
+            true;
     }
 }

@@ -23,6 +23,13 @@ namespace kohanis.ComfortableInventory
             _harmony.PatchAll(Assembly.GetExecutingAssembly());
             Tank__HandleAddFuel__Patch.Patch(_harmony);
 
+            var drinkingGlass = ItemManager.GetItemByName("DrinkingGlass");
+            var bucket = ItemManager.GetItemByName("Bucket");
+            var bucketMilk = ItemManager.GetItemByName("Bucket_Milk");
+            Traverse.Create(drinkingGlass.settings_consumeable).Field("foodForm").SetValue(FoodForm.Fluid);
+            Traverse.Create(bucket.settings_consumeable).Field("foodForm").SetValue(FoodForm.Fluid);
+            Traverse.Create(bucketMilk.settings_consumeable).Field("foodType").SetValue(FoodType.Food);
+
             Log("Mod has been loaded!");
         }
 

@@ -11,9 +11,25 @@
                     self.settings_consumeable.FoodForm == FoodForm.None);
         }
 
+        internal static bool IsEquipment(this Item_Base self) =>
+            self.settings_equipment.EquipType != EquipSlotType.None;
+
         internal static bool IsCookedFood(this Item_Base self)
         {
-            return self.settings_consumeable.FoodForm != FoodForm.None && self.settings_Inventory.StackSize <= 5;
+            // There's no better way
+            var uniqueName = self.UniqueName;
+            return self.settings_consumeable.FoodType == FoodType.Food &&
+                   (uniqueName.StartsWith("Cooked_") || uniqueName.StartsWith("Claybowl_") ||
+                    uniqueName.StartsWith("ClayPlate_") || uniqueName.StartsWith("DrinkingGlass_"));
+        }
+
+        internal static bool IsFreshWater(this Item_Base self) =>
+            self.settings_consumeable.FoodType == FoodType.Water;
+
+        internal static bool IsFoodContainers(this Item_Base self)
+        {
+            var consumable = self.settings_consumeable;
+            return consumable.FoodType == FoodType.None && consumable.FoodForm != FoodForm.None;
         }
     }
 }

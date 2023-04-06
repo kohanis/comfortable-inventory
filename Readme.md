@@ -6,7 +6,7 @@
 * Shift-moving item from/to hotbar when only inventory is open will always move entire stack if possible
 * Putting multiple items into tank containers (recycler, biofuel/water tank, engine, etc) at same time while holding shift
 * RMB with equipment in hands, while not in inventory screen, will attempt to equip it
-* Items now go into inventory by default, not hotbar. Except equipment, tools, cooked food, healing and buildable items. Can be disabled or configured with "Extra Settings API" mod. Supersede "Inventory Before Hotbar" mod
+* Items now go into inventory by default, not hotbar. Except equipment, tools, cooked food, fresh water, food containers, healing and buildable items. Can be disabled or configured with "Extra Settings API" mod. Supersede "Inventory Before Hotbar" mod
 
 # Attribution
 Icon - [by Parzival’ 1997 - Flaticon](https://www.flaticon.com/premium-icon/inventory_5867373)
