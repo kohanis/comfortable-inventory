@@ -12,7 +12,7 @@ namespace kohanis.ComfortableInventory.Patches
     {
         private static bool Prefix(Inventory __instance, Item_Base stackableItem, ref Slot __result)
         {
-            if (!Config.PreferInventory || !(__instance is PlayerInventory self))
+            if (!Config.PreferInventory || stackableItem == null || !(__instance is PlayerInventory self))
                 return true;
 
             var subCategory = stackableItem.settings_recipe.SubCategory;
