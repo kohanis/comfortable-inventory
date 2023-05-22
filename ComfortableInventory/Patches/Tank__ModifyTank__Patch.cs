@@ -68,7 +68,6 @@ namespace kohanis.ComfortableInventory.Patches
                 self.RemoveItemUses(uniqueItemName, uses, addItemAfterUseToInventory);
         }
 
-        [HarmonyDebug]
         private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
             foreach (var instruction in instructions)

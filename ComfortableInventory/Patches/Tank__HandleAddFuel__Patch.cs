@@ -20,7 +20,6 @@ namespace kohanis.ComfortableInventory.Patches
 
         internal static void Patch(Harmony harmony)
         {
-            Harmony.DEBUG = true;
             try
             {
                 harmony.Patch(Reflected.Tank__HandleAddFuel__MethodInfo, transpiler: TranspilerMethod);
@@ -32,7 +31,6 @@ namespace kohanis.ComfortableInventory.Patches
             }
 
             Tank__ModifyTank__Patch.Patch(harmony);
-            Harmony.DEBUG = false;
         }
 
         private static int Calculate(int original, Tank self, Item_Base item, ItemInstance hotslot)
