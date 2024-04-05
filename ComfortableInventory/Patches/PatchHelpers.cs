@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 using System.Reflection.Emit;
+using kohanis.ComfortableInventory.Reflected.Delegates;
 
 namespace kohanis.ComfortableInventory.Patches
 {
@@ -23,8 +24,7 @@ namespace kohanis.ComfortableInventory.Patches
             { OpCodes.Stloc_S, OpCodes.Ldloc_S }
         };
 
-        public static void ReplenishSlotIfNeeded(Slot slot, int originalUniqueIndex,
-            PlayerInventory playerInventory)
+        public static void ReplenishSlotIfNeeded(Slot slot, int originalUniqueIndex, PlayerInventory playerInventory)
         {
             if (slot.itemInstance?.UniqueIndex == originalUniqueIndex)
                 return;
@@ -42,9 +42,9 @@ namespace kohanis.ComfortableInventory.Patches
                     continue;
 
                 if (slot.IsEmpty)
-                    playerInventory.MoveSlotToEmpty(localSlot, slot, slotItemInstance.Amount);
+                    playerInventory.MoveSlotToEmptyReflected(localSlot, slot, slotItemInstance.Amount);
                 else
-                    playerInventory.SwitchSlots(localSlot, slot);
+                    playerInventory.SwitchSlotsReflected(localSlot, slot);
 
                 break;
             }

@@ -19,14 +19,19 @@
         <AssemblySearchPaths>$(AssemblySearchPaths);$(GameManagedBinaries);</AssemblySearchPaths>
     </PropertyGroup>
 
+    <ItemDefinitionGroup>
+        <Reference Private="False"/>
+    </ItemDefinitionGroup>
+
     <ItemGroup>
-        <Reference Include="Assembly-CSharp.dll" HintPath="$(GameManagedBinaries)/Assembly-CSharp.dll" Private="false"/>
-        <Reference Include="UnityEngine.CoreModule.dll" HintPath="$(GameManagedBinaries)/UnityEngine.CoreModule.dll" Private="false"/>
-        <Reference Include="UnityEngine.InputLegacyModule.dll" HintPath="$(GameManagedBinaries)/UnityEngine.InputLegacyModule.dll" Private="false"/>
-        <Reference Include="UnityEngine.UI.dll" HintPath="$(GameManagedBinaries)/UnityEngine.UI.dll" Private="false"/>
-        <Reference Include="0Harmony.dll" HintPath="$(RaftModLoaderBinaries)/0Harmony.dll" Private="false"/>
-        <Reference Include="coremod.dll" HintPath="$(RaftModLoaderBinaries)/coremod.dll" Private="false"/>
-        <Reference Include="HMLCoreLibrary.dll" HintPath="$(RaftModLoaderBinaries)/HMLCoreLibrary.dll" Private="false"/>
+        <Reference Include="Assembly-CSharp.dll" HintPath="$(GameManagedBinaries)/Assembly-CSharp.dll"/>
+        <Reference Include="UnityEngine.CoreModule.dll" HintPath="$(GameManagedBinaries)/UnityEngine.CoreModule.dll"/>
+        <Reference Include="UnityEngine.InputLegacyModule.dll" HintPath="$(GameManagedBinaries)/UnityEngine.InputLegacyModule.dll"/>
+        <Reference Include="UnityEngine.UI.dll" HintPath="$(GameManagedBinaries)/UnityEngine.UI.dll"/>
+
+        <Reference Include="0Harmony.dll" HintPath="$(RaftModLoaderBinaries)/0Harmony.dll"/>
+        <Reference Include="coremod.dll" HintPath="$(RaftModLoaderBinaries)/coremod.dll"/>
+        <Reference Include="HMLCoreLibrary.dll" HintPath="$(RaftModLoaderBinaries)/HMLCoreLibrary.dll"/>
     </ItemGroup>
 
     <PropertyGroup>

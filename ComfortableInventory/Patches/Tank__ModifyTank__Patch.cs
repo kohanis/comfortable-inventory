@@ -2,12 +2,13 @@
 using System.Reflection;
 using System.Reflection.Emit;
 using HarmonyLib;
+using kohanis.ComfortableInventory.Reflected;
 
 // ReSharper disable InconsistentNaming
 
 namespace kohanis.ComfortableInventory.Patches
 {
-    public static class Tank__ModifyTank__Patch
+    internal static class Tank__ModifyTank__Patch
     {
         private static readonly HarmonyMethod TranspilerMethod =
             new HarmonyMethod(typeof(Tank__ModifyTank__Patch), nameof(Transpiler));
@@ -18,9 +19,9 @@ namespace kohanis.ComfortableInventory.Patches
         private static readonly MethodInfo RemoveItemUsesReplacement_MethodInfo =
             AccessTools.Method(typeof(Tank__ModifyTank__Patch), nameof(RemoveItemUsesReplacement));
 
-        internal static void Patch(Harmony harmony)
+        public static void Patch(Harmony harmony)
         {
-            harmony.Patch(Reflected.Tank__ModifyTank__MethodInfo, transpiler: TranspilerMethod);
+            harmony.Patch(MethodInfos.Tank__ModifyTank, transpiler: TranspilerMethod);
         }
 
         private static (int, int) Calculate(this Tank tank, float fuelAmount, Item_Base item)
@@ -71,14 +72,14 @@ namespace kohanis.ComfortableInventory.Patches
         private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
             foreach (var instruction in instructions)
-                if (instruction.Calls(Reflected.Slot__IncrementUses__MethodInfo))
+                if (instruction.Calls(MethodInfos.Slot__IncrementUses))
                 {
                     yield return new CodeInstruction(OpCodes.Ldarg_0);
                     yield return new CodeInstruction(OpCodes.Ldarg_2);
                     yield return new CodeInstruction(OpCodes.Ldarg_3);
                     yield return new CodeInstruction(OpCodes.Call, IncrementUsesReplacement_MethodInfo);
                 }
-                else if (instruction.Calls(Reflected.Inventory__RemoveItemUses__MethodInfo))
+                else if (instruction.Calls(MethodInfos.Inventory__RemoveItemUses))
                 {
                     yield return new CodeInstruction(OpCodes.Ldarg_0);
                     yield return new CodeInstruction(OpCodes.Ldarg_2);

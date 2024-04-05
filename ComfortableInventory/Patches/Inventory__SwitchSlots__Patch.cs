@@ -1,15 +1,16 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using HarmonyLib;
+using kohanis.ComfortableInventory.Reflected;
 
 // ReSharper disable InconsistentNaming
 
 namespace kohanis.ComfortableInventory.Patches
 {
     /// <summary>
-    ///     Allows switch equipment of same type (except backpacks)
+    ///     Allows switching equipment of same type (except backpacks)
     /// </summary>
     [HarmonyPatch(typeof(Inventory), "SwitchSlots")]
     internal static class Inventory__SwitchSlots__Patch
@@ -46,9 +47,9 @@ namespace kohanis.ComfortableInventory.Patches
                     list[i + 5].opcode != OpCodes.Ldfld ||
                     list[i + 6].opcode != OpCodes.Ldfld ||
                     list[i + 7].opcode != OpCodes.Callvirt ||
-                    !list[i + 8].Calls(Reflected.Slot_Equip__GetEquipSlotWithTag__MethodInfo) ||
+                    !list[i + 8].Calls(MethodInfos.Slot_Equip__GetEquipSlotWithTag) ||
                     list[i + 9].opcode != OpCodes.Ldnull ||
-                    !list[i + 10].Calls(Reflected.Object__op_Inequality__MethodInfo))
+                    !list[i + 10].Calls(MethodInfos.Object__op_Inequality))
                     continue;
 
                 list[i + 7] = new CodeInstruction(OpCodes.Call, CustomCheck_MethodInfo)

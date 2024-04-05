@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using HarmonyLib;
+using kohanis.ComfortableInventory.Reflected.Delegates;
 
 // ReSharper disable InconsistentNaming
 
@@ -31,7 +32,7 @@ namespace kohanis.ComfortableInventory.Patches
             {
                 if (equipType == EquipSlotType.Backpack)
                     return;
-                inventory.SwitchSlots(slot, equipSlot);
+                inventory.SwitchSlotsReflected(slot, equipSlot);
             }
             else
             {
@@ -39,7 +40,7 @@ namespace kohanis.ComfortableInventory.Patches
                 if (equipSlot == null)
                     return;
 
-                inventory.MoveSlotToEmpty(slot, equipSlot, 1);
+                inventory.MoveSlotToEmptyReflected(slot, equipSlot, 1);
             }
         }
     }

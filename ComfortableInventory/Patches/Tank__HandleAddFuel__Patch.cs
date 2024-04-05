@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 using HarmonyLib;
+using kohanis.ComfortableInventory.Reflected;
 using UnityEngine;
 
 // ReSharper disable InconsistentNaming
 
 namespace kohanis.ComfortableInventory.Patches
 {
-    public class Tank__HandleAddFuel__Patch
+    internal class Tank__HandleAddFuel__Patch
     {
         // TODO: move this to HarmonyPatchCategory with release
         private static readonly HarmonyMethod TranspilerMethod =
@@ -18,11 +19,11 @@ namespace kohanis.ComfortableInventory.Patches
         private static readonly MethodInfo CalcAmount_MethodInfo =
             AccessTools.Method(typeof(Tank__HandleAddFuel__Patch), nameof(Calculate));
 
-        internal static void Patch(Harmony harmony)
+        public static void Patch(Harmony harmony)
         {
             try
             {
-                harmony.Patch(Reflected.Tank__HandleAddFuel__MethodInfo, transpiler: TranspilerMethod);
+                harmony.Patch(MethodInfos.Tank__HandleAddFuel, transpiler: TranspilerMethod);
             }
             catch (TranspilerException e)
             {
@@ -50,19 +51,18 @@ namespace kohanis.ComfortableInventory.Patches
             foreach (var instruction in instructions)
             {
                 if (itemInstanceStloc == null &&
-                    lastInstruction.Calls(Reflected.PlayerInventory__GetSelectedHotbarItem__MethodInfo) &&
+                    lastInstruction.Calls(MethodInfos.PlayerInventory__GetSelectedHotbarItem) &&
                     instruction.IsStloc())
                     itemInstanceStloc = instruction;
                 else if (baseItemStloc == null &&
-                         lastInstruction.LoadsField(Reflected.ItemInstance__baseItem__FieldInfo) &&
-                         instruction.IsStloc())
+                         lastInstruction.LoadsField(FieldInfos.ItemInstance__baseItem) && instruction.IsStloc())
                     baseItemStloc = instruction;
 
                 lastInstruction = instruction;
                 yield return instruction;
 
                 if (itemInstanceStloc != null && baseItemStloc != null &&
-                    instruction.LoadsField(Reflected.SO_FuelValue__fuelValueOfType__FieldInfo))
+                    instruction.LoadsField(FieldInfos.SO_FuelValue__fuelValueOfType))
                 {
                     yield return new CodeInstruction(OpCodes.Ldarg_0);
                     yield return baseItemStloc.Clone(PatchHelpers.MirroredOpcodes[baseItemStloc.opcode]);

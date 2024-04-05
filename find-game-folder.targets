@@ -46,4 +46,9 @@
     <PropertyGroup>
         <GamePath Condition="!Exists('$(GamePath)')"/>
     </PropertyGroup>
+
+    <Target Name="PrintGamePath" BeforeTargets="PrepareForBuild">
+        <Error Condition="'$(GamePath)' == ''" Text="Game path was not found"/>
+        <Message Text="Found game path: $(GamePath)"/>
+    </Target>
 </Project>

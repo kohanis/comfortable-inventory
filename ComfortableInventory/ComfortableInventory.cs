@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using HarmonyLib;
 using HMLLibrary;
 using kohanis.ComfortableInventory.Patches;
@@ -10,7 +11,9 @@ namespace kohanis.ComfortableInventory
     internal class ComfortableInventory : Mod
     {
         private const string HarmonyID = "dev.kohanis.Raft.ComfortableInventory";
-        private static readonly Config ExtraSettingsAPI_Settings;
+        
+        // ReSharper disable once InconsistentNaming
+        private static readonly Type ExtraSettingsAPI_Settings = typeof(Config);
 
         private static JsonModInfo _modInfo;
         private static Harmony _harmony;

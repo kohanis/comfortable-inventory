@@ -1,4 +1,4 @@
-﻿using HarmonyLib;
+using HarmonyLib;
 
 // ReSharper disable InconsistentNaming
 
@@ -10,22 +10,22 @@ namespace kohanis.ComfortableInventory.Patches
     [HarmonyPatch(typeof(Inventory), nameof(Inventory.RemoveItem))]
     internal static class Inventory__RemoveItem__Patch
     {
-        private static void Prefix(Inventory __instance, out (int?, int) __state, ref int ___dragAmount)
+        private static void Prefix(Inventory __instance, out int? __state)
         {
-            __state = ((__instance as PlayerInventory)?.GetSelectedHotbarItem()?.UniqueIndex, ___dragAmount);
-            ___dragAmount = -315;
+            Slot__RemoveItem__Patch.Skip = true;
+
+            __state = (__instance as PlayerInventory)?.GetSelectedHotbarItem()?.UniqueIndex;
         }
 
-        private static void Postfix(Inventory __instance, (int?, int) __state, out int ___dragAmount)
+        private static void Postfix(Inventory __instance, int? __state)
         {
-            var (uniqueIndex, dragAmount) = __state;
-            ___dragAmount = dragAmount;
+            Slot__RemoveItem__Patch.Skip = false;
 
-            if (!uniqueIndex.HasValue)
+            if (!__state.HasValue)
                 return;
 
             var playerInventory = (PlayerInventory)__instance;
-            PatchHelpers.ReplenishSlotIfNeeded(playerInventory.GetSelectedHotbarSlot(), uniqueIndex.Value,
+            PatchHelpers.ReplenishSlotIfNeeded(playerInventory.GetSelectedHotbarSlot(), __state.GetValueOrDefault(),
                 playerInventory);
         }
     }

@@ -1,4 +1,4 @@
-﻿using HarmonyLib;
+using HarmonyLib;
 
 // ReSharper disable InconsistentNaming
 
@@ -8,23 +8,25 @@ namespace kohanis.ComfortableInventory.Patches
     ///     Replenish slot if needed
     /// </summary>
     [HarmonyPatch(typeof(Slot), nameof(Slot.RemoveItem))]
-    public static class Slot__RemoveItem__Patch
+    internal static class Slot__RemoveItem__Patch
     {
-        private static void Prefix(Slot __instance, out int? __state, Inventory ___inventory)
+        public static bool Skip = false;
+
+        private static void Prefix(Slot __instance, ref int? __state, Inventory ___inventory)
         {
-            __state = __instance.IsEmpty || ___inventory == null || ___inventory.gameObject.activeSelf ||
-                      Reflected.Inventory_dragAmount_Ref() == -315
-                ? (int?)null
-                : __instance.itemInstance.UniqueIndex;
+            if (Skip || __instance.IsEmpty || !(___inventory is PlayerInventory playerInventory) ||
+                playerInventory.gameObject.activeSelf || !playerInventory.hotbar.ContainsSlot(__instance))
+            {
+                return;
+            }
+
+            __state = __instance.itemInstance.UniqueIndex;
         }
 
         private static void Postfix(Slot __instance, int? __state, Inventory ___inventory)
         {
-            if (!__state.HasValue)
-                return;
-
-            if (___inventory is PlayerInventory inventory)
-                PatchHelpers.ReplenishSlotIfNeeded(__instance, __state.Value, inventory);
+            if (__state.HasValue && ___inventory is PlayerInventory inventory)
+                PatchHelpers.ReplenishSlotIfNeeded(__instance, __state.GetValueOrDefault(), inventory);
         }
     }
 }

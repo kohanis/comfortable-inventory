@@ -2,6 +2,8 @@
 using System.Reflection;
 using System.Reflection.Emit;
 using HarmonyLib;
+using kohanis.ComfortableInventory.Reflected;
+using kohanis.ComfortableInventory.Reflected.Delegates;
 
 // ReSharper disable InconsistentNaming
 
@@ -39,12 +41,12 @@ namespace kohanis.ComfortableInventory.Patches
 
                 if (iterSlot.IsEmpty)
                 {
-                    self.MoveSlotToEmpty(slot, iterSlot, slot.itemInstance.Amount);
+                    self.MoveSlotToEmptyReflected(slot, iterSlot, slot.itemInstance.Amount);
                     break;
                 }
 
                 if (isStackable && !iterSlot.StackIsFull() && iterSlot.itemInstance.UniqueIndex == uniqueIndex)
-                    self.StackSlots(slot, iterSlot, slot.itemInstance.Amount);
+                    self.StackSlotsReflected(slot, iterSlot, slot.itemInstance.Amount);
             }
 
             return null;
@@ -53,7 +55,7 @@ namespace kohanis.ComfortableInventory.Patches
         private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
             foreach (var codeInstruction in instructions)
-                if (codeInstruction.Calls(Reflected.PlayerInventory__FindSuitableSlot__MethodInfo))
+                if (codeInstruction.Calls(MethodInfos.PlayerInventory__FindSuitableSlot))
                 {
                     yield return new CodeInstruction(OpCodes.Ldarg_1);
                     yield return new CodeInstruction(OpCodes.Call, FindSuitableSlotReplacement_MethodInfo);

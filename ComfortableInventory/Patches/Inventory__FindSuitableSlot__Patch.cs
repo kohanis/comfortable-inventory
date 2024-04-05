@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using kohanis.ComfortableInventory.Reflected.Delegates;
 
 // ReSharper disable InconsistentNaming
 
@@ -28,11 +29,11 @@ namespace kohanis.ComfortableInventory.Patches
 
 
             if (stackableItem.settings_Inventory.Stackable)
-                __result = self.FindSuitableSlot(0, self.hotslotCount, stackableItem);
+                __result = self.FindSuitableSlotReflected(0, self.hotslotCount, stackableItem);
 
             if (__result == null || __result.IsEmpty)
             {
-                var slot = self.FindSuitableSlot(self.hotslotCount, self.allSlots.Count, stackableItem);
+                var slot = self.FindSuitableSlotReflected(self.hotslotCount, self.allSlots.Count, stackableItem);
 
                 if (slot != null)
                     __result = slot;
