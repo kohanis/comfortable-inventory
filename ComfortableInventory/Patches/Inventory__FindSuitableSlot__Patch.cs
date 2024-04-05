@@ -28,13 +28,11 @@ namespace kohanis.ComfortableInventory.Patches
 
 
             if (stackableItem.settings_Inventory.Stackable)
-                __result = (Slot)Reflected.PlayerInventory__FindSuitableSlot__Invoker(self,
-                    new object[] { 0, self.hotslotCount, stackableItem });
+                __result = self.FindSuitableSlot(0, self.hotslotCount, stackableItem);
 
             if (__result == null || __result.IsEmpty)
             {
-                var slot = (Slot)Reflected.PlayerInventory__FindSuitableSlot__Invoker(self,
-                    new object[] { self.hotslotCount, self.allSlots.Count, stackableItem });
+                var slot = self.FindSuitableSlot(self.hotslotCount, self.allSlots.Count, stackableItem);
 
                 if (slot != null)
                     __result = slot;

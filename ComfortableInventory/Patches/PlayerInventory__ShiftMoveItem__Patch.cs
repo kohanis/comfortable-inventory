@@ -39,14 +39,12 @@ namespace kohanis.ComfortableInventory.Patches
 
                 if (iterSlot.IsEmpty)
                 {
-                    Reflected.PlayerInventory__MoveSlotToEmpty__Invoker(self,
-                        new object[] { slot, iterSlot, slot.itemInstance.Amount });
+                    self.MoveSlotToEmpty(slot, iterSlot, slot.itemInstance.Amount);
                     break;
                 }
 
                 if (isStackable && !iterSlot.StackIsFull() && iterSlot.itemInstance.UniqueIndex == uniqueIndex)
-                    Reflected.PlayerInventory__StackSlots__Invoker(self,
-                        new object[] { slot, iterSlot, slot.itemInstance.Amount });
+                    self.StackSlots(slot, iterSlot, slot.itemInstance.Amount);
             }
 
             return null;

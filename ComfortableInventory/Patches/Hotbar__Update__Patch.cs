@@ -31,7 +31,7 @@ namespace kohanis.ComfortableInventory.Patches
             {
                 if (equipType == EquipSlotType.Backpack)
                     return;
-                Reflected.PlayerInventory__SwitchSlots__Invoker(inventory, new object[] { slot, equipSlot });
+                inventory.SwitchSlots(slot, equipSlot);
             }
             else
             {
@@ -39,7 +39,7 @@ namespace kohanis.ComfortableInventory.Patches
                 if (equipSlot == null)
                     return;
 
-                Reflected.PlayerInventory__MoveSlotToEmpty__Invoker(inventory, new object[] { slot, equipSlot, 1 });
+                inventory.MoveSlotToEmpty(slot, equipSlot, 1);
             }
         }
     }

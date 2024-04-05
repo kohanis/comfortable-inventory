@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Runtime.CompilerServices;
 using HarmonyLib;
 using UnityEngine;
 
@@ -9,9 +10,6 @@ namespace kohanis.ComfortableInventory
     internal static class Reflected
     {
         // Fields
-
-        public static readonly FieldInfo Inventory__dragAmount__FieldInfo =
-            AccessTools.Field(typeof(Inventory), "dragAmount");
 
         public static readonly FieldInfo ItemInstance__baseItem__FieldInfo =
             AccessTools.Field(typeof(ItemInstance), nameof(ItemInstance.baseItem));
@@ -34,15 +32,6 @@ namespace kohanis.ComfortableInventory
         public static readonly MethodInfo PlayerInventory__GetSelectedHotbarItem__MethodInfo =
             AccessTools.Method(typeof(PlayerInventory), nameof(PlayerInventory.GetSelectedHotbarItem));
 
-        public static readonly MethodInfo PlayerInventory__MoveSlotToEmpty__MethodInfo =
-            AccessTools.Method(typeof(PlayerInventory), "MoveSlotToEmpty");
-
-        public static readonly MethodInfo PlayerInventory__StackSlots__MethodInfo =
-            AccessTools.Method(typeof(PlayerInventory), "StackSlots");
-
-        public static readonly MethodInfo PlayerInventory__SwitchSlots__MethodInfo =
-            AccessTools.Method(typeof(PlayerInventory), "SwitchSlots");
-
         public static readonly MethodInfo Slot__IncrementUses__MethodInfo =
             AccessTools.Method(typeof(Slot), nameof(Slot.IncrementUses));
 
@@ -59,21 +48,49 @@ namespace kohanis.ComfortableInventory
         // FieldRefs
 
         public static readonly AccessTools.FieldRef<Inventory, int> Inventory_dragAmount_Ref =
-            AccessTools.FieldRefAccess<Inventory, int>(Inventory__dragAmount__FieldInfo);
+            AccessTools.FieldRefAccess<Inventory, int>("dragAmount");
+        
+        // Delegate types
+        
+        private delegate Slot PlayerInventory__FindSuitableSlot(PlayerInventory self, int startSlotIndex, int endSlotIndex, Item_Base stackableItem = null);
+        
+        [HarmonyDelegate(typeof(PlayerInventory), "MoveSlotToEmpty")]
+        private delegate void PlayerInventory__MoveSlotToEmpty(PlayerInventory self, Slot fromSlot, Slot toSlot, int amount);
+        
+        [HarmonyDelegate(typeof(PlayerInventory), "StackSlots")]
+        private delegate void PlayerInventory__StackSlots(PlayerInventory self, Slot fromSlot, Slot toSlot, int dragAmount);
+        
+        [HarmonyDelegate(typeof(PlayerInventory), "SwitchSlots")]
+        private delegate void PlayerInventory__SwitchSlots(PlayerInventory self, Slot fromSlot, Slot toSlot);
+        
+        // Delegates
 
-        // FastInvokeHandlers
-        // TODO: Move to AccessTools.MethodDelegate with Harmony 2.0.2
+        private static readonly PlayerInventory__FindSuitableSlot PlayerInventory__FindSuitableSlot__Delegate =
+            AccessTools.MethodDelegate<PlayerInventory__FindSuitableSlot>(PlayerInventory__FindSuitableSlot__MethodInfo);
 
-        public static readonly FastInvokeHandler PlayerInventory__FindSuitableSlot__Invoker =
-            MethodInvoker.GetHandler(PlayerInventory__FindSuitableSlot__MethodInfo);
+        private static readonly PlayerInventory__MoveSlotToEmpty PlayerInventory__MoveSlotToEmpty__Delegate =
+            AccessTools.HarmonyDelegate<PlayerInventory__MoveSlotToEmpty>();
 
-        public static readonly FastInvokeHandler PlayerInventory__MoveSlotToEmpty__Invoker =
-            MethodInvoker.GetHandler(PlayerInventory__MoveSlotToEmpty__MethodInfo);
+        private static readonly PlayerInventory__StackSlots PlayerInventory__StackSlots__Delegate =
+            AccessTools.HarmonyDelegate<PlayerInventory__StackSlots>();
 
-        public static readonly FastInvokeHandler PlayerInventory__StackSlots__Invoker =
-            MethodInvoker.GetHandler(PlayerInventory__StackSlots__MethodInfo);
+        private static readonly PlayerInventory__SwitchSlots PlayerInventory__SwitchSlots__Delegate =
+            AccessTools.HarmonyDelegate<PlayerInventory__SwitchSlots>();
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Slot FindSuitableSlot(this PlayerInventory self, int startSlotIndex, int endSlotIndex, Item_Base stackableItem = null) => 
+            PlayerInventory__FindSuitableSlot__Delegate(self, startSlotIndex, endSlotIndex, stackableItem);
 
-        public static readonly FastInvokeHandler PlayerInventory__SwitchSlots__Invoker =
-            MethodInvoker.GetHandler(PlayerInventory__SwitchSlots__MethodInfo);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void MoveSlotToEmpty(this PlayerInventory self, Slot fromSlot, Slot toSlot, int amount) => 
+            PlayerInventory__MoveSlotToEmpty__Delegate(self, fromSlot, toSlot, amount);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void StackSlots(this PlayerInventory self, Slot fromSlot, Slot toSlot, int dragAmount) => 
+            PlayerInventory__StackSlots__Delegate(self, fromSlot, toSlot, dragAmount);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void SwitchSlots(this PlayerInventory self, Slot fromSlot, Slot toSlot) => 
+            PlayerInventory__SwitchSlots__Delegate(self, fromSlot, toSlot);
     }
 }
