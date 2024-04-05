@@ -47,8 +47,8 @@ namespace kohanis.ComfortableInventory
 
         // FieldRefs
 
-        public static readonly AccessTools.FieldRef<Inventory, int> Inventory_dragAmount_Ref =
-            AccessTools.FieldRefAccess<Inventory, int>("dragAmount");
+        public static readonly AccessTools.FieldRef<int> Inventory_dragAmount_Ref =
+            AccessTools.StaticFieldRefAccess<int>(AccessTools.Field(typeof(Inventory), "dragAmount"));
         
         // Delegate types
         

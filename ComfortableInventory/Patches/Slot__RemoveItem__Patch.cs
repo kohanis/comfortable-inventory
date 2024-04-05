@@ -13,7 +13,7 @@ namespace kohanis.ComfortableInventory.Patches
         private static void Prefix(Slot __instance, out int? __state, Inventory ___inventory)
         {
             __state = __instance.IsEmpty || ___inventory == null || ___inventory.gameObject.activeSelf ||
-                      Reflected.Inventory_dragAmount_Ref(___inventory) == -315
+                      Reflected.Inventory_dragAmount_Ref() == -315
                 ? (int?)null
                 : __instance.itemInstance.UniqueIndex;
         }
