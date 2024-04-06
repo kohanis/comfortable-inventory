@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using HarmonyLib;
 using UnityEngine;
 
@@ -8,24 +8,38 @@ namespace kohanis.ComfortableInventory.Reflected
 {
     internal static class MethodInfos
     {
+        public static readonly MethodInfo Nullable__Bool__HasValue__Getter =
+            AccessTools.PropertyGetter(typeof(bool?), nameof(System.Nullable<bool>.HasValue));
+
+        public static readonly MethodInfo Nullable__Bool__GetValueOrDefault =
+            AccessTools.Method(typeof(bool?), nameof(System.Nullable<bool>.GetValueOrDefault));
+
         public static readonly MethodInfo Inventory__RemoveItemUses =
             AccessTools.Method(typeof(Inventory), nameof(Inventory.RemoveItemUses));
 
+        public static readonly MethodInfo Hotbar__ContainsSlot =
+            AccessTools.Method(typeof(Hotbar), nameof(Hotbar.ContainsSlot));
+
         public static readonly MethodInfo Object__op_Inequality =
             AccessTools.Method(typeof(Object), "op_Inequality");
+                
+        public static readonly MethodInfo Inventory__MoveSlotToEmpty =
+            AccessTools.Method(typeof(Inventory), "MoveSlotToEmpty");
 
-        public static readonly MethodInfo PlayerInventory__FindSuitableSlot =
-            AccessTools.Method(typeof(PlayerInventory), "FindSuitableSlot", 
-                new[] { typeof(int), typeof(int), typeof(Item_Base) });
-
-        public static readonly MethodInfo PlayerInventory__GetSelectedHotbarItem =
-            AccessTools.Method(typeof(PlayerInventory), nameof(PlayerInventory.GetSelectedHotbarItem));
+        public static readonly MethodInfo Inventory__StackSlots =
+            AccessTools.Method(typeof(Inventory), "StackSlots");
 
         public static readonly MethodInfo Slot__IncrementUses =
             AccessTools.Method(typeof(Slot), nameof(Slot.IncrementUses));
 
         public static readonly MethodInfo Slot_Equip__GetEquipSlotWithTag =
             AccessTools.Method(typeof(Slot_Equip), nameof(Slot_Equip.GetEquipSlotWithTag));
+        
+        public static readonly MethodInfo Slot__IsEmpty__Getter =
+            AccessTools.PropertyGetter(typeof(Slot), nameof(Slot.IsEmpty));
+
+        public static readonly MethodInfo LiquidFuelManager__GetFilteredFuelValueSoFromItem =
+            AccessTools.Method(typeof(LiquidFuelManager), nameof(LiquidFuelManager.GetFilteredFuelValueSoFromItem));
 
         public static readonly MethodInfo Tank__HandleAddFuel =
             AccessTools.Method(typeof(Tank), "HandleAddFuel");

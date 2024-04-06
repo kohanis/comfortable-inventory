@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using HarmonyLib;
@@ -18,8 +17,11 @@ namespace kohanis.ComfortableInventory.Patches
         private static readonly MethodInfo CustomCheck_MethodInfo =
             AccessTools.Method(typeof(Inventory__SwitchSlots__Patch), nameof(CustomCheck));
 
-        private static bool CustomCheck(Slot slot, Slot equipSlot)
+        private static bool? CustomCheck(bool swapNeeded, Slot slot, Slot equipSlot)
         {
+            if (swapNeeded)
+                (slot, equipSlot) = (equipSlot, slot);
+
             var slotEquipType = slot.itemInstance.settings_equipment.EquipType;
             var equipSlotEquipType = equipSlot.itemInstance.settings_equipment.EquipType;
 
@@ -29,44 +31,52 @@ namespace kohanis.ComfortableInventory.Patches
             if (slotEquipType == equipSlotEquipType)
                 return false;
 
-            return Slot_Equip.GetEquipSlotWithTag(slotEquipType) != null;
+            return null;
         }
 
-        private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+        private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions,
+            ILGenerator generator)
         {
-            var list = instructions.ToList();
-            var count = list.Count - 11;
+            var codeMatcher = new CodeMatcher(instructions, generator)
+                .MatchStartForward(
+                    new CodeMatch(OpCodes.Brfalse_S),
+                    new CodeMatch(OpCodes.Ldarg_1),
+                    new CodeMatch(OpCodes.Br_S),
+                    new CodeMatch(OpCodes.Ldarg_2),
+                    new CodeMatch(OpCodes.Ldfld),
+                    new CodeMatch(OpCodes.Ldfld),
+                    new CodeMatch(OpCodes.Callvirt),
+                    new CodeMatch(OpCodes.Call, MethodInfos.Slot_Equip__GetEquipSlotWithTag),
+                    new CodeMatch(OpCodes.Ldnull),
+                    new CodeMatch(OpCodes.Call, MethodInfos.Object__op_Inequality)
+                );
 
-            for (var i = 0; i < count; i++)
+            if (codeMatcher.IsInvalid)
             {
-                if (!list[i].IsLdloc() ||
-                    list[i + 1].opcode != OpCodes.Brfalse_S ||
-                    list[i + 2].opcode != OpCodes.Ldarg_1 ||
-                    list[i + 3].opcode != OpCodes.Br_S ||
-                    list[i + 4].opcode != OpCodes.Ldarg_2 ||
-                    list[i + 5].opcode != OpCodes.Ldfld ||
-                    list[i + 6].opcode != OpCodes.Ldfld ||
-                    list[i + 7].opcode != OpCodes.Callvirt ||
-                    !list[i + 8].Calls(MethodInfos.Slot_Equip__GetEquipSlotWithTag) ||
-                    list[i + 9].opcode != OpCodes.Ldnull ||
-                    !list[i + 10].Calls(MethodInfos.Object__op_Inequality))
-                    continue;
-
-                list[i + 7] = new CodeInstruction(OpCodes.Call, CustomCheck_MethodInfo)
-                {
-                    labels = list[i + 5].labels
-                };
-                list[i + 6] = new CodeInstruction(OpCodes.Ldarg_1);
-                list[i + 5] = list[i + 4];
-                list[i + 4] = list[i + 3];
-                list[i + 3] = new CodeInstruction(OpCodes.Ldarg_2);
-
-                list.RemoveRange(i + 8, 3);
-                return list;
+                ComfortableInventory.LogError("Inventory.SwitchSlots patch failed");
+                return null;
             }
 
-            ComfortableInventory.LogError("Inventory.SwitchSlots patch failed");
-            return null;
+            var localVar = generator.DeclareLocal(typeof(bool?));
+
+            return codeMatcher
+                .CreateLabelWithOffsets(10, out var longJump)
+                .CreateLabel(out var shortJump)
+                .Insert(
+                    new CodeInstruction(OpCodes.Dup),
+                    new CodeInstruction(OpCodes.Ldarg_1),
+                    new CodeInstruction(OpCodes.Ldarg_2),
+                    new CodeInstruction(OpCodes.Call, CustomCheck_MethodInfo),
+                    new CodeInstruction(OpCodes.Stloc, localVar),
+                    new CodeInstruction(OpCodes.Ldloca, localVar),
+                    new CodeInstruction(OpCodes.Call, MethodInfos.Nullable__Bool__HasValue__Getter),
+                    new CodeInstruction(OpCodes.Brfalse_S, shortJump),
+                    new CodeInstruction(OpCodes.Pop),
+                    new CodeInstruction(OpCodes.Ldloca, localVar),
+                    new CodeInstruction(OpCodes.Call, MethodInfos.Nullable__Bool__GetValueOrDefault),
+                    new CodeInstruction(OpCodes.Br, longJump)
+                )
+                .Instructions();
         }
     }
 }

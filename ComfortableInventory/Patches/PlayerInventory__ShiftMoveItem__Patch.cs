@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Reflection;
+using System.Collections.Generic;
 using System.Reflection.Emit;
 using HarmonyLib;
 using kohanis.ComfortableInventory.Reflected;
-using kohanis.ComfortableInventory.Reflected.Delegates;
 
 // ReSharper disable InconsistentNaming
 
@@ -15,55 +13,80 @@ namespace kohanis.ComfortableInventory.Patches
     [HarmonyPatch(typeof(PlayerInventory), nameof(PlayerInventory.ShiftMoveItem))]
     internal static class PlayerInventory__ShiftMoveItem__Patch
     {
-        private static readonly MethodInfo FindSuitableSlotReplacement_MethodInfo =
-            AccessTools.Method(typeof(PlayerInventory__ShiftMoveItem__Patch), "FindSuitableSlotReplacement");
+        private static readonly HashSet<OpCode> longBranchCodes = new HashSet<OpCode>
+            { OpCodes.Brfalse, OpCodes.Brtrue, OpCodes.Brfalse_S, OpCodes.Brtrue_S };
 
-        private static Slot FindSuitableSlotReplacement(this PlayerInventory self, int startSlotIndex,
-            int endSlotIndex, Item_Base item, Slot slot)
+        private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions,
+            ILGenerator generator)
         {
-            var allSlots = self.allSlots;
-            var count = allSlots.Count;
-            if (startSlotIndex < 0 || endSlotIndex > count || item == null)
-                return null;
-
-            var uniqueIndex = item.UniqueIndex;
-            var isStackable = item.settings_Inventory.Stackable;
-
-            for (var index = startSlotIndex; index < endSlotIndex; index++)
+            var codeMatcher = new CodeMatcher(instructions, generator)
+                .MatchStartForward(
+                    new CodeMatch(ins => longBranchCodes.Contains(ins.opcode)),
+                    new CodeMatch(OpCodes.Ldarg_0),
+                    new CodeMatch(OpCodes.Ldfld, FieldInfos.PlayerInventory__hotbar),
+                    new CodeMatch(OpCodes.Ldarg_1),
+                    new CodeMatch(OpCodes.Callvirt, MethodInfos.Hotbar__ContainsSlot),
+                    new CodeMatch(OpCodes.Brfalse_S)
+                );
+            
+            if (codeMatcher.IsInvalid)
             {
-                if (slot.IsEmpty)
-                    break;
-
-                var iterSlot = allSlots[index];
-
-                if (!iterSlot.gameObject.activeSelf)
-                    continue;
-
-                if (iterSlot.IsEmpty)
-                {
-                    self.MoveSlotToEmptyReflected(slot, iterSlot, slot.itemInstance.Amount);
-                    break;
-                }
-
-                if (isStackable && !iterSlot.StackIsFull() && iterSlot.itemInstance.UniqueIndex == uniqueIndex)
-                    self.StackSlotsReflected(slot, iterSlot, slot.itemInstance.Amount);
+                ComfortableInventory.LogError("PlayerInventory.ShiftMoveItem patch failed");
+                return null;
             }
 
-            return null;
-        }
+            var endLabel = (Label)codeMatcher.Operand;
 
-        private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
-        {
-            foreach (var codeInstruction in instructions)
-                if (codeInstruction.Calls(MethodInfos.PlayerInventory__FindSuitableSlot))
-                {
-                    yield return new CodeInstruction(OpCodes.Ldarg_1);
-                    yield return new CodeInstruction(OpCodes.Call, FindSuitableSlotReplacement_MethodInfo);
-                }
-                else
-                {
-                    yield return codeInstruction;
-                }
+            codeMatcher
+                .Advance(1)
+                .CreateLabel(out var shortLabel)
+                .Insert(
+                    new CodeInstruction(OpCodes.Br, shortLabel),
+                    new CodeInstruction(OpCodes.Ldarg_1),
+                    new CodeInstruction(OpCodes.Callvirt, MethodInfos.Slot__IsEmpty__Getter),
+                    new CodeInstruction(OpCodes.Brfalse_S, shortLabel),
+                    new CodeInstruction(OpCodes.Ret)
+                )
+                .Advance(1)
+                .CreateLabel(out var longLabel)
+                .Advance(5)
+                .SearchForward(ins => ins.labels.Contains(endLabel));
+            
+            if (codeMatcher.IsInvalid)
+            {
+                ComfortableInventory.LogError("PlayerInventory.ShiftMoveItem patch failed");
+                return null;
+            }
+
+            codeMatcher.MatchStartBackwards(
+                new CodeMatch(OpCodes.Callvirt, MethodInfos.Inventory__StackSlots),
+                new CodeMatch(OpCodes.Ret)
+            );
+            
+            if (codeMatcher.IsInvalid)
+            {
+                ComfortableInventory.LogError("PlayerInventory.ShiftMoveItem patch failed");
+                return null;
+            }
+            
+            codeMatcher
+                .Advance(1)
+                .Set(OpCodes.Br, longLabel)
+                .MatchStartBackwards(
+                    new CodeMatch(OpCodes.Callvirt, MethodInfos.Inventory__MoveSlotToEmpty),
+                    new CodeMatch(OpCodes.Ret)
+                );
+            
+            if (codeMatcher.IsInvalid)
+            {
+                ComfortableInventory.LogError("PlayerInventory.ShiftMoveItem patch failed");
+                return null;
+            }
+
+            return codeMatcher
+                .Advance(1)
+                .Set(OpCodes.Br, longLabel)
+                .Instructions();
         }
     }
 }

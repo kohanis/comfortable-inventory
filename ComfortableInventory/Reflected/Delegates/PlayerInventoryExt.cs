@@ -14,9 +14,6 @@ namespace kohanis.ComfortableInventory.Reflected.Delegates
         [HarmonyDelegate(typeof(PlayerInventory), "MoveSlotToEmpty")]
         private delegate void MoveSlotToEmpty(PlayerInventory self, Slot fromSlot, Slot toSlot, int amount);
 
-        [HarmonyDelegate(typeof(PlayerInventory), "StackSlots")]
-        private delegate void StackSlots(PlayerInventory self, Slot fromSlot, Slot toSlot, int dragAmount);
-
         [HarmonyDelegate(typeof(PlayerInventory), "SwitchSlots")]
         private delegate void SwitchSlots(PlayerInventory self, Slot fromSlot, Slot toSlot);
 
@@ -29,9 +26,6 @@ namespace kohanis.ComfortableInventory.Reflected.Delegates
 
         private static readonly MoveSlotToEmpty MoveSlotToEmptyInvoker =
             AccessTools.HarmonyDelegate<MoveSlotToEmpty>();
-
-        private static readonly StackSlots StackSlotsInvoker =
-            AccessTools.HarmonyDelegate<StackSlots>();
 
         private static readonly SwitchSlots SwitchSlotsInvoker =
             AccessTools.HarmonyDelegate<SwitchSlots>();
@@ -50,10 +44,6 @@ namespace kohanis.ComfortableInventory.Reflected.Delegates
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void MoveSlotToEmptyReflected(this PlayerInventory self, Slot fromSlot, Slot toSlot, int amount)
             => MoveSlotToEmptyInvoker(self, fromSlot, toSlot, amount);
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void StackSlotsReflected(this PlayerInventory self, Slot fromSlot, Slot toSlot, int dragAmount)
-            => StackSlotsInvoker(self, fromSlot, toSlot, dragAmount);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void SwitchSlotsReflected(this PlayerInventory self, Slot fromSlot, Slot toSlot) =>
