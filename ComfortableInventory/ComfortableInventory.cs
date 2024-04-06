@@ -25,6 +25,7 @@ namespace kohanis.ComfortableInventory
 
             _harmony.PatchAll(Assembly.GetExecutingAssembly());
             Tank__HandleAddFuel__Patch.Patch(_harmony);
+            AugmentedEquipment__Hack.Patch(_harmony);
 
             var drinkingGlass = ItemManager.GetItemByName("DrinkingGlass");
             var bucket = ItemManager.GetItemByName("Bucket");
