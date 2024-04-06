@@ -48,7 +48,7 @@ namespace kohanis.ComfortableInventory.Patches
                     new CodeMatch(OpCodes.Callvirt),
                     new CodeMatch(OpCodes.Call, MethodInfos.Slot_Equip__GetEquipSlotWithTag),
                     new CodeMatch(OpCodes.Ldnull),
-                    new CodeMatch(OpCodes.Call, MethodInfos.Object__op_Inequality)
+                    new CodeMatch(OpCodes.Call, MethodInfos.UnityEngine_Object__op_Inequality)
                 );
 
             if (codeMatcher.IsInvalid)

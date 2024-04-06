@@ -6,7 +6,7 @@ using kohanis.ComfortableInventory.Reflected.Delegates;
 namespace kohanis.ComfortableInventory.Patches
 {
     /// <summary>
-    ///     Prefer inventory functional
+    ///     Prefer inventory feature
     /// </summary>
     [HarmonyPatch(typeof(Inventory), "FindSuitableSlot")]
     internal static class Inventory__FindSuitableSlot__Patch

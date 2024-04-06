@@ -1,6 +1,6 @@
 using System.Reflection;
 using HarmonyLib;
-using UnityEngine;
+
 
 // ReSharper disable InconsistentNaming
 
@@ -19,9 +19,6 @@ namespace kohanis.ComfortableInventory.Reflected
 
         public static readonly MethodInfo Hotbar__ContainsSlot =
             AccessTools.Method(typeof(Hotbar), nameof(Hotbar.ContainsSlot));
-
-        public static readonly MethodInfo Object__op_Inequality =
-            AccessTools.Method(typeof(Object), "op_Inequality");
                 
         public static readonly MethodInfo Inventory__MoveSlotToEmpty =
             AccessTools.Method(typeof(Inventory), "MoveSlotToEmpty");
@@ -46,5 +43,8 @@ namespace kohanis.ComfortableInventory.Reflected
 
         public static readonly MethodInfo Tank__ModifyTank =
             AccessTools.Method(typeof(Tank), nameof(Tank.ModifyTank));
+        
+        public static readonly MethodInfo UnityEngine_Object__op_Inequality =
+            AccessTools.Method(typeof(UnityEngine.Object), "op_Inequality");
     }
 }

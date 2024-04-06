@@ -25,7 +25,6 @@ namespace kohanis.ComfortableInventory
 
             _harmony.PatchAll(Assembly.GetExecutingAssembly());
             Tank__HandleAddFuel__Patch.Patch(_harmony);
-            AugmentedEquipment__Hack.Patch(_harmony);
 
             var drinkingGlass = ItemManager.GetItemByName("DrinkingGlass");
             var bucket = ItemManager.GetItemByName("Bucket");
@@ -47,6 +46,11 @@ namespace kohanis.ComfortableInventory
         public static void Log(string message)
         {
             Debug.Log($"[{_modInfo?.name}] : {message}");
+        }
+        
+        public static void LogWarning(string message)
+        {
+            Debug.LogWarning($"[{_modInfo?.name}] : {message}");
         }
 
         public static void LogError(string message)
